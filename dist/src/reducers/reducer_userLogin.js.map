@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../src/reducers/reducer_userLogin.js"],"names":["email","password"],"mappings":";;;;;;kBAAe,YAAU;AACrB,WAAO,CACH,EAACA,OAAOA,KAAR,EADG,EAEH,EAACC,UAAUA,QAAX,EAFG,CAAP;AAIH,C","file":"reducer_userLogin.js","sourcesContent":["export default function(){\n    return [\n        {email: email},\n        {password: password}\n    ]\n}"]}

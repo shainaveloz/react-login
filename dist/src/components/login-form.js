@@ -26,7 +26,9 @@ var LoginForm = function (_Component) {
 
         var _this = _possibleConstructorReturn(this, (LoginForm.__proto__ || Object.getPrototypeOf(LoginForm)).call(this, props));
 
-        _this.state = { value: '' };
+        _this.state = {
+            value: ''
+        };
 
         _this.onChange = _this.onChange.bind(_this);
         _this.onSubmit = _this.onSubmit.bind(_this);
@@ -36,12 +38,41 @@ var LoginForm = function (_Component) {
     _createClass(LoginForm, [{
         key: 'onChange',
         value: function onChange(event) {
-            this.setState({ value: event.target.value });
+            this.setState({
+                email: event.target.value,
+                password: event.target.value
+            });
+        }
+    }, {
+        key: 'onSubmit',
+        value: function onSubmit(event) {
+            console.log('A user was logged in: ' + this.state.email);
+            event.preventDefault();
         }
     }, {
         key: 'render',
         value: function render() {
-            return _react2.default.createElement('form', { onSubmit: this.onSubmit });
+            return _react2.default.createElement(
+                'form',
+                { className: 'form', onSubmit: this.onSubmit },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'col-md-4' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'form-group', placeholder: 'username', required: '' },
+                        'Email:',
+                        _react2.default.createElement('input', { className: 'form-control', type: 'text', value: this.email, onChange: this.onChange, placeholder: 'email', required: '' })
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'form-group' },
+                        'Password:',
+                        _react2.default.createElement('input', { type: 'password', className: 'form-control', value: this.password, onChange: this.onChange, placeholder: 'password', required: '' })
+                    ),
+                    _react2.default.createElement('input', { type: 'submit', value: 'Submit' })
+                )
+            );
         }
     }]);
 
@@ -51,4 +82,4 @@ var LoginForm = function (_Component) {
 ;
 
 exports.default = LoginForm;
-//# sourceMappingURL=login.js.map
+//# sourceMappingURL=login-form.js.map
