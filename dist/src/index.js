@@ -8,43 +8,29 @@ var _reactDom = require('react-dom');
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _reactRouter = require('react-router');
+var _reactRedux = require('react-redux');
 
-var _loginForm = require('./components/login-form.js');
+var _redux = require('redux');
 
-var _loginForm2 = _interopRequireDefault(_loginForm);
+var _reduxPromise = require('redux-promise');
+
+var _reduxPromise2 = _interopRequireDefault(_reduxPromise);
+
+var _app = require('./components/app');
+
+var _app2 = _interopRequireDefault(_app);
+
+var _reducers = require('./reducers');
+
+var _reducers2 = _interopRequireDefault(_reducers);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var App = function App() {
-    return _react2.default.createElement(
-        'div',
-        { className: 'row' },
-        _react2.default.createElement(
-            'div',
-            { className: 'col-md-12' },
-            _react2.default.createElement(
-                'div',
-                { className: 'page-header' },
-                _react2.default.createElement(
-                    'h1',
-                    null,
-                    'Happster Login'
-                )
-            ),
-            _react2.default.createElement(
-                'div',
-                { className: 'col-md-4' },
-                _react2.default.createElement(
-                    'h3',
-                    null,
-                    'Sign In'
-                ),
-                _react2.default.createElement(_loginForm2.default, null)
-            )
-        )
-    );
-};
+var createStoreWithMiddleware = (0, _redux.applyMiddleware)(_reduxPromise2.default)(_redux.createStore);
 
-_reactDom2.default.render(_react2.default.createElement(App, null), document.querySelector('.container'));
+_reactDom2.default.render(_react2.default.createElement(
+    _reactRedux.Provider,
+    { store: createStoreWithMiddleware(_reducers2.default) },
+    _react2.default.createElement(_app2.default, null)
+), document.querySelector('.container'));
 //# sourceMappingURL=index.js.map
