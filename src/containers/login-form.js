@@ -9,7 +9,8 @@ class LoginForm extends Component{
         super(props);
 
         this.state = {
-            value: ''
+            email: '',
+            password: ''
         };
 
         this.onInputChange = this.onInputChange.bind(this);
@@ -17,9 +18,11 @@ class LoginForm extends Component{
     }
 
     onInputChange(event) {
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
         this.setState({
-            email: event.target.email,
-            password: event.target.password
+           [name]: value
         });
     }
 
@@ -29,7 +32,7 @@ class LoginForm extends Component{
 
         this.props.fetchUsers(this.state.value);
         this.setState({
-            email:'',
+            email: '',
             password: ''
         })
     }
@@ -40,11 +43,11 @@ class LoginForm extends Component{
                 <div className="col-md-4">
                     <div className="form-group" placeholder="username" required="">
                         Email:
-                        <input className="form-control" type="text" value={this.state.email} onChange={this.onInputChange} placeholder="email" required=""/>
+                        <input className="form-control" type="text" name="email" value={this.state.email} onChange={this.onInputChange} placeholder="email" required=""/>
                     </div>
                     <div className="form-group">
                         Password:
-                        <input type="password" className="form-control" value={this.state.password} onChange={this.onInputChange} placeholder="password" required=""/>
+                        <input type="password" className="form-control" name="password" value={this.state.password} onChange={this.onInputChange} placeholder="password" required=""/>
                     </div>
                     <input type="submit" value="Submit" />
                 </div>

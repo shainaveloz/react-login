@@ -18,6 +18,8 @@ var _index = require('../actions/index');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -33,7 +35,8 @@ var LoginForm = function (_Component) {
         var _this = _possibleConstructorReturn(this, (LoginForm.__proto__ || Object.getPrototypeOf(LoginForm)).call(this, props));
 
         _this.state = {
-            value: ''
+            email: '',
+            password: ''
         };
 
         _this.onInputChange = _this.onInputChange.bind(_this);
@@ -44,10 +47,10 @@ var LoginForm = function (_Component) {
     _createClass(LoginForm, [{
         key: 'onInputChange',
         value: function onInputChange(event) {
-            this.setState({
-                email: event.target.email,
-                password: event.target.password
-            });
+            var target = event.target;
+            var value = target.value;
+            var name = target.name;
+            this.setState(_defineProperty({}, name, value));
         }
     }, {
         key: 'onFormSubmit',
@@ -74,13 +77,13 @@ var LoginForm = function (_Component) {
                         'div',
                         { className: 'form-group', placeholder: 'username', required: '' },
                         'Email:',
-                        _react2.default.createElement('input', { className: 'form-control', type: 'text', value: this.state.email, onChange: this.onInputChange, placeholder: 'email', required: '' })
+                        _react2.default.createElement('input', { className: 'form-control', type: 'text', name: 'email', value: this.state.email, onChange: this.onInputChange, placeholder: 'email', required: '' })
                     ),
                     _react2.default.createElement(
                         'div',
                         { className: 'form-group' },
                         'Password:',
-                        _react2.default.createElement('input', { type: 'password', className: 'form-control', value: this.state.password, onChange: this.onInputChange, placeholder: 'password', required: '' })
+                        _react2.default.createElement('input', { type: 'password', className: 'form-control', name: 'password', value: this.state.password, onChange: this.onInputChange, placeholder: 'password', required: '' })
                     ),
                     _react2.default.createElement('input', { type: 'submit', value: 'Submit' })
                 )
