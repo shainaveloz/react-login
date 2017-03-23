@@ -6,11 +6,18 @@ class UserList extends Component{
     renderList(){
         return this.props.users.map((user) => {
             return (
-                <li
+                <table
                     key={user.email}
-                    className="list-group-item">
-                    {user.email}
-                </li>
+                    className="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Users:</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {user.email}
+                    </tbody>
+                </table>
             );
         });
     }

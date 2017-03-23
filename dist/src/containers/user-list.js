@@ -34,11 +34,28 @@ var UserList = function (_Component) {
         value: function renderList() {
             return this.props.users.map(function (user) {
                 return _react2.default.createElement(
-                    'li',
+                    'table',
                     {
                         key: user.email,
-                        className: 'list-group-item' },
-                    user.email
+                        className: 'table table-hover' },
+                    _react2.default.createElement(
+                        'thead',
+                        null,
+                        _react2.default.createElement(
+                            'tr',
+                            null,
+                            _react2.default.createElement(
+                                'th',
+                                null,
+                                'Users:'
+                            )
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'tbody',
+                        null,
+                        user.email
+                    )
                 );
             });
         }

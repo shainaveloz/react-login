@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {fetchUsers} from '../actions/index';
+import {loginUser} from '../actions/index';
 
 
 class LoginForm extends Component{
@@ -30,7 +30,7 @@ class LoginForm extends Component{
         console.log('A user was logged in: ' + this.state.email);
         event.preventDefault();
 
-        this.props.fetchUsers(this.state.value);
+        this.props.loginUser(this.state.value);
         this.setState({
             email: '',
             password: ''
@@ -57,7 +57,7 @@ class LoginForm extends Component{
 };
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({fetchUsers}, dispatch);
+  return bindActionCreators({loginUser}, dispatch);
 }
 
 export default connect(null, mapDispatchToProps)(LoginForm);

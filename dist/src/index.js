@@ -12,13 +12,15 @@ var _reactRedux = require('react-redux');
 
 var _redux = require('redux');
 
+var _reactRouter = require('react-router');
+
+var _routes = require('./routes');
+
+var _routes2 = _interopRequireDefault(_routes);
+
 var _reduxPromise = require('redux-promise');
 
 var _reduxPromise2 = _interopRequireDefault(_reduxPromise);
-
-var _app = require('./components/app');
-
-var _app2 = _interopRequireDefault(_app);
 
 var _reducers = require('./reducers');
 
@@ -31,6 +33,6 @@ var createStoreWithMiddleware = (0, _redux.applyMiddleware)(_reduxPromise2.defau
 _reactDom2.default.render(_react2.default.createElement(
     _reactRedux.Provider,
     { store: createStoreWithMiddleware(_reducers2.default) },
-    _react2.default.createElement(_app2.default, null)
+    _react2.default.createElement(_reactRouter.Router, { history: _reactRouter.browserHistory, routes: _routes2.default })
 ), document.querySelector('.container'));
 //# sourceMappingURL=index.js.map

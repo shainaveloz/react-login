@@ -10,10 +10,6 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-var _loginForm = require('../containers/login-form');
-
-var _loginForm2 = _interopRequireDefault(_loginForm);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -47,17 +43,8 @@ var App = function (_Component) {
                             'h1',
                             null,
                             'Happster Login'
-                        )
-                    ),
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'col-md-4' },
-                        _react2.default.createElement(
-                            'h3',
-                            null,
-                            'Sign In'
                         ),
-                        _react2.default.createElement(_loginForm2.default, null)
+                        this.props.children
                     )
                 )
             );

@@ -58,7 +58,7 @@ var LoginForm = function (_Component) {
             console.log('A user was logged in: ' + this.state.email);
             event.preventDefault();
 
-            this.props.fetchUsers(this.state.value);
+            this.props.loginUser(this.state.value);
             this.setState({
                 email: '',
                 password: ''
@@ -97,7 +97,7 @@ var LoginForm = function (_Component) {
 ;
 
 function mapDispatchToProps(dispatch) {
-    return (0, _redux.bindActionCreators)({ fetchUsers: _index.fetchUsers }, dispatch);
+    return (0, _redux.bindActionCreators)({ loginUser: _index.loginUser }, dispatch);
 }
 
 exports.default = (0, _reactRedux.connect)(null, mapDispatchToProps)(LoginForm);
