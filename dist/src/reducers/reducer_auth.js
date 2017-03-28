@@ -3,45 +3,28 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = auth;
 
-var _index = require('../actions/index');
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+//
 
-//import jwtDecode from 'jwt-decode';
 
-function auth() {
-    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-        isFetching: false,
-        isAuthenticated: localStorage.getItem('id_token') ? true : false
-    };
+exports.default = function () {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var action = arguments[1];
 
     switch (action.type) {
-        case _index.LOGIN_USER_REQUEST:
-            return Object.assign({}, state, {
-                isFetching: true,
-                isAuthenticated: false,
-                user: action.creds
-            });
-        case _index.LOGIN_USER_SUCCESS:
-            return Object.assign({}, state, {
-                isFetching: false,
-                isAuthenticated: true,
-                errorMessage: ''
-            });
-        case _index.LOGIN_USER_FAILURE:
-            return Object.assign({}, state, {
-                isFetching: false,
-                isAuthenticated: false,
-                errorMessage: action.message
-            });
-        case _index.LOGOUT_SUCCESS:
-            return Object.assign({}, state, {
-                isFetching: true,
-                isAuthenticated: false
-            });
-        default:
-            return state;
+        case _types.AUTH_USER:
+            return _extends({}, state, { error: '', authenticated: true });
+        case _types.UNAUTH_USER:
+            return _extends({}, state, { authenticated: false });
+        case _types.AUTH_ERROR:
+            return _extends({}, state, { error: action.payload });
+        case _types.FETCH_MESSAGE:
+            return _extends({}, state, { message: action.payload });
     }
-}
+
+    return state;
+};
+
+var _types = require('../actions/types');
 //# sourceMappingURL=reducer_auth.js.map

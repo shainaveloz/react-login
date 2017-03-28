@@ -3,131 +3,91 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.LOGOUT_FAILURE = exports.LOGOUT_SUCCESS = exports.LOGOUT_REQUEST = exports.LOGIN_USER_FAILURE = exports.LOGIN_USER_SUCCESS = exports.LOGIN_USER_REQUEST = undefined;
-exports.parseJSON = parseJSON;
 exports.loginUser = loginUser;
+exports.authError = authError;
 exports.logoutUser = logoutUser;
+exports.fetchMessage = fetchMessage;
 
 var _axios = require('axios');
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _jwtDecode = require('jwt-decode');
+var _reactRouter = require('react-router');
 
-var _jwtDecode2 = _interopRequireDefault(_jwtDecode);
-
-var _api = require('../middleware/api');
+var _types = require('./types');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var LOGIN_USER_REQUEST = exports.LOGIN_USER_REQUEST = 'LOGIN_USER_REQUEST';
-var LOGIN_USER_SUCCESS = exports.LOGIN_USER_SUCCESS = 'LOGIN_USER_SUCCESS';
-var LOGIN_USER_FAILURE = exports.LOGIN_USER_FAILURE = 'LOGIN_USER_FAILURE';
-var LOGOUT_REQUEST = exports.LOGOUT_REQUEST = 'LOGOUT_REQUEST';
-var LOGOUT_SUCCESS = exports.LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
-var LOGOUT_FAILURE = exports.LOGOUT_FAILURE = 'LOGOUT_FAILURE';
-//export const FETCH_USERS = 'FETCH_USERS';
+var API_URL = '';
 
-function parseJSON(response) {
-    return response.json();
-}
+_axios2.default.interceptors.request.use(function (config) {
+    // Do something before request is sent
+    var token = localStorage.getItem('token');
+    if (config.url.indexOf(API_URL) === 0 && token) {
+        config.headers['x-access-token'] = token;
+    }
+    return config;
+}, function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+});
 
-function requestLogin(name) {
-    return {
-        type: LOGIN_USER_REQUEST,
-        isFetching: true,
-        isAuthenticated: false,
-        name: name
-    };
-}
+_axios2.default.interceptors.response.use(function (res) {
+    // Do something with response data
+    var token = localStorage.getItem('token');
+    if (res.data.message == 'Failed to authenticate token') {
+        _reactRouter.browserHistory.push('/login');
+    } else if (res.config.url.indexOf(API_URL) === 0 && res.data.token) {
+        console.log(res.data.token);
+    }
+    return response;
+}, function (error) {
+    // Do something with response error
+    _reactRouter.browserHistory.push('/login');
+    return Promise.reject(error);
+});
 
-function receiveLogin(user) {
-    return {
-        type: LOGIN_USER_SUCCESS,
-        isFetching: false,
-        isAuthenticated: true,
-        id_token: user.id_token
-    };
-}
-
-function loginError(message) {
-    return {
-        type: LOGIN_USER_FAILURE,
-        isFetching: false,
-        isAuthenticated: false,
-        message: message
-    };
-}
-
-function requestLogout() {
-    return {
-        type: LOGOUT_REQUEST,
-        isFetching: true,
-        isAuthenticated: true
-    };
-}
-
-function receiveLogout() {
-    return {
-        type: LOGOUT_SUCCESS,
-        isFetching: false,
-        isAuthenticated: false
-    };
-}
-
-function loginUser(creds) {
-
-    var config = {
-        method: 'POST',
-        headers: { 'x-access-token': 'application/x-www-form-urlencoded' },
-        body: 'email=' + name.email + '&password=' + name.password
-    };
+function loginUser(_ref) {
+    var email = _ref.email,
+        password = _ref.password;
 
     return function (dispatch) {
-        // We dispatch requestLogin to kickoff the call to the API
-        dispatch(requestLogin(name));
-
-        return fetch('http://localhost:8080/sessions/create', config).then(function (response) {
-            return response.json().then(function (user) {
-                return { user: user, response: response };
-            });
-        }).then(function (_ref) {
-            var user = _ref.user,
-                response = _ref.response;
-
-            if (!response.ok) {
-                // If there was a problem, we want to
-                // dispatch the error condition
-                dispatch(loginError(user.message));
-                return Promise.reject(user);
-            } else {
-                // If login was successful, set the token in local storage
-                localStorage.setItem('id_token', user.id_token);
-                // Dispatch the success action
-                dispatch(receiveLogin(user));
-            }
-        }).catch(function (err) {
-            return console.log("Error: ", err);
+        _axios2.default.post(API_URL + '/authenticate', { email: email, password: password }).then(function (response) {
+            console.log(response.headers);
+            dispatch({ type: _types.AUTH_USER });
+            localStorage.setItem('token', response.data.token);
+            _reactRouter.browserHistory.push('/feature');
+        }).catch(function () {
+            dispatch(authError('Bad Login Info'));
         });
     };
 }
 
-// Logs the user out
-function logoutUser() {
-    return function (dispatch) {
-        dispatch(requestLogout());
-        localStorage.removeItem('id_token');
-        dispatch(receiveLogout());
+function authError(error) {
+    return {
+        type: _types.AUTH_ERROR,
+        payload: error
     };
 }
 
-// export function fetchUsers() {
-//     const url = `${API}`;
-//     const request = axios.get(url);
-//
-//     return{
-//         type: FETCH_USERS,
-//         payload: request
-//     }
-// }
+function logoutUser() {
+    localStorage.removeItem('token');
+
+    return { type: _types.UNAUTH_USER };
+}
+
+function fetchMessage() {
+    return function (dispatch) {
+        _axios2.default.get(API_URL, {
+            headers: {
+                authorization: localStorage.getItem('token')
+            }
+        }).then(function (response) {
+            dispatch({
+                type: _types.FETCH_MESSAGE,
+                payload: response.data.message
+            });
+        });
+    };
+}
 //# sourceMappingURL=index.js.map

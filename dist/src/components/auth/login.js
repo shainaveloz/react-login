@@ -4,21 +4,23 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRedux = require('react-redux');
-
 var _reduxForm = require('redux-form');
 
-var _redux = require('redux');
+var _reactRedux = require('react-redux');
 
-var _index = require('../actions/index');
+var _actions = require('../../actions');
+
+var actions = _interopRequireWildcard(_actions);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -27,6 +29,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var renderInput = function renderInput(field) {
+    var input = field.input,
+        type = field.type;
+
+    return _react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement('input', _extends({}, input, { type: type, className: 'form-control' }))
+    );
+};
 
 var Login = function (_Component) {
     _inherits(Login, _Component);
@@ -38,16 +51,14 @@ var Login = function (_Component) {
     }
 
     _createClass(Login, [{
-        key: 'handleSubmit',
-        value: function handleSubmit(event, _ref) {
+        key: 'handleFormSubmit',
+        value: function handleFormSubmit(_ref) {
             var email = _ref.email,
                 password = _ref.password;
 
-            console.log('A user was logged in: ' + this.state.email);
-            event.preventDefault();
+            console.log(email, password);
 
-            // Need to do something to log user in
-            this.props.requestLogin({ email: email, password: password });
+            this.props.loginUser({ email: email, password: password });
         }
     }, {
         key: 'renderAlert',
@@ -69,32 +80,36 @@ var Login = function (_Component) {
     }, {
         key: 'render',
         value: function render() {
-            var _props = this.props,
-                handleSubmit = _props.handleSubmit,
-                _props$fields = _props.fields,
-                email = _props$fields.email,
-                password = _props$fields.password;
+            var handleSubmit = this.props.handleSubmit;
 
             return _react2.default.createElement(
                 'form',
-                { className: 'form', onSubmit: handleSubmit(this.handleSubmit(this).bind) },
+                { onSubmit: handleSubmit(this.handleFormSubmit.bind(this)) },
                 _react2.default.createElement(
-                    'div',
-                    { className: 'col-md-4' },
+                    'fieldset',
+                    { className: 'form-group' },
                     _react2.default.createElement(
-                        'div',
-                        { className: 'form-group', placeholder: 'username', required: '' },
-                        'Email:',
-                        _react2.default.createElement('input', _extends({}, email, { className: 'form-control', type: 'text', name: 'email', placeholder: 'email', required: '' }))
+                        'label',
+                        null,
+                        'Email:'
                     ),
+                    _react2.default.createElement(_reduxForm.Field, { name: 'email', component: renderInput, type: 'text', className: 'form-control' })
+                ),
+                _react2.default.createElement(
+                    'fieldset',
+                    { className: 'form-group' },
                     _react2.default.createElement(
-                        'div',
-                        { className: 'form-group' },
-                        'Password:',
-                        _react2.default.createElement('input', _extends({}, password, { type: 'password', className: 'form-control', name: 'password', placeholder: 'password', required: '' }))
+                        'label',
+                        null,
+                        'Password:'
                     ),
-                    this.renderAlert(),
-                    _react2.default.createElement('input', { type: 'submit', value: 'Submit' })
+                    _react2.default.createElement(_reduxForm.Field, { name: 'password', component: renderInput, type: 'password', className: 'form-control' })
+                ),
+                this.renderAlert(),
+                _react2.default.createElement(
+                    'button',
+                    { action: 'submit', className: 'btn btn-primary' },
+                    ' Log in'
                 )
             );
         }
@@ -106,11 +121,18 @@ var Login = function (_Component) {
 ;
 
 function mapStateToProps(state) {
-    return { errorMessage: state.auth.error };
+    return {
+        form: state.form,
+        errorMessage: state.auth.errorMessage
+    };
 }
 
-exports.default = (0, _reduxForm.reduxForm)({
+Login = (0, _reactRedux.connect)(mapStateToProps, actions)(Login);
+
+Login = (0, _reduxForm.reduxForm)({
     form: 'login',
-    fields: ['email', 'password']
-}, mapStateToProps, actions)(Login);
-//# sourceMappingURL=login-form.js.map
+    errorMessage: 'error'
+})(Login);
+
+exports.default = Login;
+//# sourceMappingURL=login.js.map

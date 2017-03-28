@@ -10,9 +10,13 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-var _header = require('./header');
+var _reactRedux = require('react-redux');
 
-var _header2 = _interopRequireDefault(_header);
+var _actions = require('../actions');
+
+var actions = _interopRequireWildcard(_actions);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -22,42 +26,37 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var App = function (_Component) {
-    _inherits(App, _Component);
+var Feature = function (_Component) {
+    _inherits(Feature, _Component);
 
-    function App() {
-        _classCallCheck(this, App);
+    function Feature() {
+        _classCallCheck(this, Feature);
 
-        return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+        return _possibleConstructorReturn(this, (Feature.__proto__ || Object.getPrototypeOf(Feature)).apply(this, arguments));
     }
 
-    _createClass(App, [{
+    _createClass(Feature, [{
+        key: 'componentWillMount',
+        value: function componentWillMount() {
+            this.props.fetchMessage();
+        }
+    }, {
         key: 'render',
         value: function render() {
             return _react2.default.createElement(
                 'div',
-                { className: 'row' },
-                _react2.default.createElement(
-                    'div',
-                    { className: 'col-md-12' },
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'page-header' },
-                        _react2.default.createElement(_header2.default, null),
-                        _react2.default.createElement(
-                            'h1',
-                            null,
-                            'Happster Login'
-                        ),
-                        this.props.children
-                    )
-                )
+                null,
+                this.props.message
             );
         }
     }]);
 
-    return App;
+    return Feature;
 }(_react.Component);
 
-exports.default = App;
-//# sourceMappingURL=app.js.map
+function mapStateToProps(state) {
+    return { message: state.auth.message };
+}
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Feature);
+//# sourceMappingURL=feature.js.map

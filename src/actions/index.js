@@ -1,110 +1,83 @@
 import axios from 'axios';
-import jwtDecode from 'jwt-decode';
-import { CALL_API } from '../middleware/api'
+import { browserHistory } from 'react-router';
+import {
+    AUTH_USER,
+    UNAUTH_USER,
+    AUTH_ERROR,
+    FETCH_MESSAGE
+} from './types';
 
-export const LOGIN_USER_REQUEST = 'LOGIN_USER_REQUEST';
-export const LOGIN_USER_SUCCESS = 'LOGIN_USER_SUCCESS';
-export const LOGIN_USER_FAILURE = 'LOGIN_USER_FAILURE';
-export const LOGOUT_REQUEST = 'LOGOUT_REQUEST';
-export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
-export const LOGOUT_FAILURE = 'LOGOUT_FAILURE';
-//export const FETCH_USERS = 'FETCH_USERS';
+const API_URL = '';
 
-export function parseJSON(response) {
-    return response.json()
+axios.interceptors.request.use(function (config) {
+    // Do something before request is sent
+    const token = localStorage.getItem('token');
+    if( (config.url.indexOf(API_URL) === 0 ) && token) {
+        config.headers['x-access-token'] = token;
+    }
+    return config;
+}, function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+});
+
+
+axios.interceptors.response.use(function (res) {
+    // Do something with response data
+    const token = localStorage.getItem('token');
+    if(res.data.message == 'Failed to authenticate token'){
+        browserHistory.push('/login');
+    }
+    else if(res.config.url.indexOf(API_URL) === 0 && res.data.token) {
+        console.log(res.data.token);
+    }
+    return response;
+}, function (error) {
+    // Do something with response error
+    browserHistory.push('/login');
+    return Promise.reject(error);
+});
+
+export function loginUser({email, password}){
+    return function(dispatch){
+        axios.post(`${API_URL}/authenticate`, {email, password})
+            .then(response =>{
+                console.log(response.headers);
+                dispatch({type: AUTH_USER});
+                localStorage.setItem('token', response.data.token);
+                browserHistory.push('/feature');
+            })
+            .catch(() =>{
+                dispatch(authError('Bad Login Info'));
+            })
+    }
 }
 
-function requestLogin(name) {
+export function authError(error){
     return {
-        type: LOGIN_USER_REQUEST,
-        isFetching: true,
-        isAuthenticated: false,
-        name
+        type: AUTH_ERROR,
+        payload: error
     }
 }
 
-function receiveLogin(user) {
-    return {
-        type: LOGIN_USER_SUCCESS,
-        isFetching: false,
-        isAuthenticated: true,
-        id_token: user.id_token
-    }
-}
-
-function loginError(message) {
-    return {
-        type: LOGIN_USER_FAILURE,
-        isFetching: false,
-        isAuthenticated: false,
-        message
-    }
-}
-
-function requestLogout() {
-    return {
-        type: LOGOUT_REQUEST,
-        isFetching: true,
-        isAuthenticated: true
-    }
-}
-
-function receiveLogout() {
-    return {
-        type: LOGOUT_SUCCESS,
-        isFetching: false,
-        isAuthenticated: false
-    }
-}
-
-
-export function loginUser(creds) {
-
-    let config = {
-        method: 'POST',
-        headers: { 'x-access-token':'application/x-www-form-urlencoded' },
-        body: `email=${name.email}&password=${name.password}`
-    }
-
-    return dispatch => {
-        // We dispatch requestLogin to kickoff the call to the API
-        dispatch(requestLogin(name))
-
-        return fetch('http://localhost:8080/sessions/create', config)
-            .then(response =>
-                response.json().then(user => ({ user, response }))
-            ).then(({ user, response }) =>  {
-                if (!response.ok) {
-                    // If there was a problem, we want to
-                    // dispatch the error condition
-                    dispatch(loginError(user.message))
-                    return Promise.reject(user)
-                } else {
-                    // If login was successful, set the token in local storage
-                    localStorage.setItem('id_token', user.id_token)
-                    // Dispatch the success action
-                    dispatch(receiveLogin(user))
-                }
-            }).catch(err => console.log("Error: ", err))
-    }
-}
-
-// Logs the user out
 export function logoutUser() {
-    return dispatch => {
-        dispatch(requestLogout());
-        localStorage.removeItem('id_token');
-        dispatch(receiveLogout())
-    }
+    localStorage.removeItem('token');
+
+    return {type: UNAUTH_USER};
 }
 
-
-// export function fetchUsers() {
-//     const url = `${API}`;
-//     const request = axios.get(url);
-//
-//     return{
-//         type: FETCH_USERS,
-//         payload: request
-//     }
-// }
+export function fetchMessage() {
+    return function (dispatch) {
+        axios.get(API_URL, {
+            headers:{
+                authorization: localStorage.getItem('token')
+            }
+        })
+            .then(response =>{
+                dispatch({
+                    type: FETCH_MESSAGE,
+                    payload: response.data.message
+                })
+            })
+    }
+}
