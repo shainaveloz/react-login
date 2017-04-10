@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.loginUser = loginUser;
 exports.authError = authError;
 exports.logoutUser = logoutUser;
-exports.fetchMessage = fetchMessage;
+exports.fetchUsers = fetchUsers;
 
 var _axios = require('axios');
 
@@ -18,33 +18,67 @@ var _types = require('./types');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var API_URL = '';
+var token = localStorage.getItem('token');
 
 _axios2.default.interceptors.request.use(function (config) {
     // Do something before request is sent
-    var token = localStorage.getItem('token');
-    if (config.url.indexOf(API_URL) === 0 && token) {
+    if (config.url.indexOf(_types.API_URL) === 0 && token) {
         config.headers['x-access-token'] = token;
     }
+    //console.log(config);
     return config;
 }, function (error) {
     // Do something with request error
+    console.log(error);
     return Promise.reject(error);
 });
 
-_axios2.default.interceptors.response.use(function (res) {
+_axios2.default.interceptors.response.use(function (response) {
     // Do something with response data
-    var token = localStorage.getItem('token');
-    if (res.data.message == 'Failed to authenticate token') {
+    if (response.data.message == 'Failed to authenticate token') {
         _reactRouter.browserHistory.push('/login');
-    } else if (res.config.url.indexOf(API_URL) === 0 && res.data.token) {
-        console.log(res.data.token);
+    } else if (response.config.url.indexOf(_types.API_URL) === 0 && response.data.token) {
+        localStorage.setItem('token', response.data.token);
     }
+
+    //console.log(response);
     return response;
 }, function (error) {
     // Do something with response error
-    _reactRouter.browserHistory.push('/login');
-    return Promise.reject(error);
+    if (error.status === 401) {
+        _reactRouter.browserHistory.push('/login');
+    }
+    /**
+     * Account Disabled
+     */
+    if (response.status === 401 && error.data.message == 'Team account disabled') {
+        logoutUser();
+        _reactRouter.browserHistory.push('/login');
+    }
+
+    /**
+     * Forbiddend Unauthorized
+     */
+    if (error.status === 403) {}
+    //$state.go('home.error',{errorCode: 403});
+
+
+    /**
+     * Not Found
+     */
+    if (error.status === 404) {}
+    //$state.go('home.error',{errorCode: 404});
+
+
+    /**
+     * Invalid Token
+     */
+    if (error.status === 401 && error.data.message == 'Failed to authenticate token') {
+        logoutUser();
+        _reactRouter.browserHistory.push('/login');
+    }
+    console.log(error);
+    return Promise.reject(response);
 });
 
 function loginUser(_ref) {
@@ -52,11 +86,10 @@ function loginUser(_ref) {
         password = _ref.password;
 
     return function (dispatch) {
-        _axios2.default.post(API_URL + '/authenticate', { email: email, password: password }).then(function (response) {
-            console.log(response.headers);
+        _axios2.default.post(_types.API_URL + '/authenticate', { email: email, password: password }).then(function (response) {
             dispatch({ type: _types.AUTH_USER });
             localStorage.setItem('token', response.data.token);
-            _reactRouter.browserHistory.push('/feature');
+            _reactRouter.browserHistory.push('/admin/user_accounts');
         }).catch(function () {
             dispatch(authError('Bad Login Info'));
         });
@@ -76,17 +109,17 @@ function logoutUser() {
     return { type: _types.UNAUTH_USER };
 }
 
-function fetchMessage() {
+function fetchUsers() {
     return function (dispatch) {
-        _axios2.default.get(API_URL, {
-            headers: {
-                authorization: localStorage.getItem('token')
-            }
+        _axios2.default.get(_types.API_URL + '/api/admin/accounts', {
+            headers: { 'x-access-token': token }
         }).then(function (response) {
             dispatch({
-                type: _types.FETCH_MESSAGE,
-                payload: response.data.message
+                type: _types.FETCH_USERS,
+                payload: response
             });
+        }).catch(function () {
+            dispatch(authError('Error'));
         });
     };
 }

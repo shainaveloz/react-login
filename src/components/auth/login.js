@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, PropTypes} from 'react';
 import { reduxForm, Field  } from 'redux-form';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
@@ -54,6 +54,12 @@ function mapStateToProps(state) {
         errorMessage: state.auth.errorMessage
     }
 }
+
+Login.propTypes = {
+    loginUser: PropTypes.func,
+    form: PropTypes.object,
+    errorMessage: PropTypes.string
+};
 
 Login = connect(mapStateToProps, actions)(Login);
 

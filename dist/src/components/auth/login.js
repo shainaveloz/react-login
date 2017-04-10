@@ -127,6 +127,12 @@ function mapStateToProps(state) {
     };
 }
 
+Login.propTypes = {
+    loginUser: _react.PropTypes.func,
+    form: _react.PropTypes.object,
+    errorMessage: _react.PropTypes.string
+};
+
 Login = (0, _reactRedux.connect)(mapStateToProps, actions)(Login);
 
 Login = (0, _reduxForm.reduxForm)({

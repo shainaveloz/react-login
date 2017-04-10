@@ -34,6 +34,7 @@ var App = function (_Component) {
     _createClass(App, [{
         key: 'render',
         value: function render() {
+            var children = this.props.children;
             return _react2.default.createElement(
                 'div',
                 { className: 'row' },
@@ -47,9 +48,9 @@ var App = function (_Component) {
                         _react2.default.createElement(
                             'h1',
                             null,
-                            'Happster Login'
+                            'Happster Admin Dashboard'
                         ),
-                        this.props.children
+                        children
                     )
                 )
             );
@@ -60,4 +61,9 @@ var App = function (_Component) {
 }(_react.Component);
 
 exports.default = App;
+
+
+App.propTypes = {
+    children: _react.PropTypes.node
+};
 //# sourceMappingURL=app.js.map

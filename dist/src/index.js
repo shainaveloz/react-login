@@ -18,6 +18,10 @@ var _reduxThunk = require('redux-thunk');
 
 var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
+var _reduxLogger = require('redux-logger');
+
+var _reduxLogger2 = _interopRequireDefault(_reduxLogger);
+
 var _app = require('./components/app');
 
 var _app2 = _interopRequireDefault(_app);
@@ -30,9 +34,9 @@ var _logout = require('./components/auth/logout');
 
 var _logout2 = _interopRequireDefault(_logout);
 
-var _feature = require('./components/feature');
+var _adminUsersAccounts = require('./components/adminUsersAccounts');
 
-var _feature2 = _interopRequireDefault(_feature);
+var _adminUsersAccounts2 = _interopRequireDefault(_adminUsersAccounts);
 
 var _require_auth = require('./components/auth/require_auth');
 
@@ -46,9 +50,7 @@ var _types = require('./actions/types');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var createStoreWithMiddleware = (0, _redux.applyMiddleware)(_reduxThunk2.default)(_redux.createStore);
-//import Dashboard from './components/dashboard';
-
+var createStoreWithMiddleware = (0, _redux.applyMiddleware)(_reduxThunk2.default, _reduxLogger2.default)(_redux.createStore);
 var store = createStoreWithMiddleware(_reducers2.default);
 
 var token = localStorage.getItem('token');
@@ -68,7 +70,7 @@ _reactDom2.default.render(_react2.default.createElement(
             { path: '/', component: _app2.default },
             _react2.default.createElement(_reactRouter.Route, { path: 'login', component: _login2.default }),
             _react2.default.createElement(_reactRouter.Route, { path: 'logout', component: _logout2.default }),
-            _react2.default.createElement(_reactRouter.Route, { path: 'feature', component: (0, _require_auth2.default)(_feature2.default) })
+            _react2.default.createElement(_reactRouter.Route, { path: 'admin/user_accounts', component: (0, _require_auth2.default)(_adminUsersAccounts2.default) })
         )
     )
 ), document.querySelector('.container'));
